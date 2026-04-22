@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>YA_QRCODE</title>
+</head>
+<body>
+  <h1>YA_QRCODE</h1>
+
+  <button onclick="consultarSaldo()">Consultar Saldo</button>
+  <div id="saldo"></div>
+
+  <h2>Adicionar Saldo (Depósito)</h2>
+  <button onclick="gerarDeposito()">Gerar Endereço de Depósito</button>
+  <div id="deposito"></div>
+
+  <h2>Histórico de Depósitos</h2>
+  <button onclick="consultarDepositos()">Consultar Depósitos</button>
+  <div id="depositos"></div>
+
+  <h2>Saque</h2>
+  <input id="asset" type="text" placeholder="Moeda (ex: BNB)">
+  <input id="amount" type="number" placeholder="Valor">
+  <input id="address" type="text" placeholder="Endereço destino">
+  <button onclick="sacar()">Sacar</button>
+  <div id="resultado"></div>
+
+  <script>
+    async function consultarSaldo() {
+      const res = await fetch("http://localhost:3000/saldo");
+      const data = await res.json();
+      document.getElementById("saldo").innerText = JSON.stringify(data, null, 2);
+    }
+
+    async function gerarDeposito() {
+      const res = await fetch("http://localhost:3000/deposito");
+      const data = await res.json();
+      document.getElementById("deposito").innerText = 
+        `Endereço de depósito BNB BEP20: ${data.address}`;
+    }
+
+    async function consultarDepositos() {
+      const res = await fetch("http://localhost:3000/depositos");
+      const data = await res.json();
+      document.getElementById("depositos").innerText = JSON.stringify(data, null, 2);
+    }
+
+    async function sacar() {
+      const asset = document.getElementById("asset").value;
+      const amount = document.getElementById("amount").value;
+      const address = document.getElementById("address").value;
+
+      const res = await fetch("http://localhost:3000/saque", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ asset, amount, address })
+      });
+      const data = await res.json();
+      document.getElementById("resultado").innerText = JSON.stringify(data, null, 2);
+    }
+  </script>
+</body>
+</html>
